@@ -50,21 +50,28 @@ func main() {
 				case "/meeting-order":
 					users, _, err := socketClient.GetUsersInConversation(&slack.GetUsersInConversationParameters{ChannelID: cmd.ChannelID})
 					if err != nil {
-						fmt.Println("Something went wrong", err)
+						blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
 					}
 					Shuffle(users)
 					count := 0
 					for _, user := range users {
-						fmt.Println(user)
 						info, err := socketClient.GetUserInfo(user)
 						if err != nil {
-							fmt.Println("Something went wrong", err)
+							blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
 						}
-						if !info.IsBot {
+						presence, err := socketClient.GetUserPresence(user)
+						if err != nil {
+							blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
+						}
+
+						if !info.IsBot && presence.Presence == "active" {
 							count++
+							order := strconv.FormatInt(int64(count), 10)
+							display := "<@" + user + ">"
 							blocks = append(
 								blocks,
-								MakeSimpleTextSectionBlock(strconv.FormatInt(int64(count), 10)+" - <@"+user+">"))
+								MakeSimpleTextSectionBlock(order+" - "+display),
+							)
 						}
 					}
 				default:
