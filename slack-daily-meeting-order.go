@@ -39,12 +39,7 @@ func main() {
 					continue
 				}
 
-				blocks := []slack.Block{
-					slack.NewSectionBlock(&slack.TextBlockObject{
-						Type: slack.MarkdownType,
-						Text: "Daily standup: ",
-					}, nil, nil),
-				}
+				blocks := []slack.Block{}
 
 				switch cmd.Command {
 				case "/meeting-order":
@@ -53,26 +48,26 @@ func main() {
 						blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
 					}
 					Shuffle(users)
-					count := 0
-					for _, user := range users {
-						info, err := socketClient.GetUserInfo(user)
-						if err != nil {
-							blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
-						}
-						presence, err := socketClient.GetUserPresence(user)
-						if err != nil {
-							blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
-						}
+					// count := 0
+					for i, user := range users {
+						// info, err := socketClient.GetUserInfo(user)
+						// if err != nil {
+						// 	blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
+						// }
+						// presence, err := socketClient.GetUserPresence(user)
+						// if err != nil {
+						// 	blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
+						// }
 
-						if !info.IsBot && presence.Presence == "active" {
-							count++
-							order := strconv.FormatInt(int64(count), 10)
-							display := "<@" + user + ">"
-							blocks = append(
-								blocks,
-								MakeSimpleTextSectionBlock(order+" - "+display),
-							)
-						}
+						// if !info.IsBot && presence.Presence == "active" {
+						// count++
+						order := strconv.FormatInt(int64(i), 10)
+						display := "<@" + user + ">"
+						blocks = append(
+							blocks,
+							MakeSimpleTextSectionBlock(order+" - "+display),
+						)
+						// }
 					}
 				default:
 					blocks = append(blocks, MakeSimpleTextSectionBlock("Unknown command :("))
