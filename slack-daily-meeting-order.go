@@ -49,7 +49,7 @@ func main() {
 					}
 					Shuffle(users)
 					count := 0
-					for i, user := range users {
+					for _, user := range users {
 						info, err := socketClient.GetUserInfo(user)
 						if err != nil {
 							blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
@@ -57,7 +57,7 @@ func main() {
 
 						if !info.IsBot {
 							count++
-							order := strconv.FormatInt(int64(i), 10)
+							order := strconv.FormatInt(int64(count), 10)
 							display := "<@" + user + ">"
 							blocks = append(
 								blocks,
