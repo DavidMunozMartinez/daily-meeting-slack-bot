@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -40,7 +41,6 @@ func main() {
 				}
 
 				blocks := []slack.Block{}
-
 				switch cmd.Command {
 				case "/meeting-order":
 					users, _, err := socketClient.GetUsersInConversation(&slack.GetUsersInConversationParameters{ChannelID: cmd.ChannelID})
@@ -48,6 +48,9 @@ func main() {
 						blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
 					}
 					Shuffle(users)
+					if cmd.Text != "" && len(users) > 0 {
+						blocks = append(blocks, MakeSimpleTextSectionBlock(cmd.Text+" Team"))
+					}
 					count := 0
 					for _, user := range users {
 						info, err := socketClient.GetUserInfo(user)
@@ -55,7 +58,7 @@ func main() {
 							blocks = append(blocks, MakeSimpleTextSectionBlock("Error: "+err.Error()))
 						}
 
-						if !info.IsBot {
+						if CanAddToList(info, cmd.Text) {
 							count++
 							order := strconv.FormatInt(int64(count), 10)
 							display := "<@" + user + ">"
@@ -99,4 +102,9 @@ func MakeSimpleTextSectionBlock(text string) slack.Block {
 		nil,
 	)
 	return block
+}
+
+func CanAddToList(info *slack.User, query string) bool {
+	passesQuery := query == "" || query != "" && strings.Contains(info.Profile.Title, query)
+	return !info.IsBot && passesQuery
 }
