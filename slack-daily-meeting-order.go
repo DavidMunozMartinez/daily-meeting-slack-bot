@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/slack-go/slack"
+	"github.com/slack-go/slack/slackevents"
 	"github.com/slack-go/slack/socketmode"
 )
 
@@ -19,6 +20,7 @@ func main() {
 		slack.OptionDebug(true),
 		slack.OptionAppLevelToken(appToken),
 	)
+
 	socketClient := socketmode.New(
 		api,
 		socketmode.OptionDebug(true),
@@ -49,8 +51,18 @@ func main() {
 				}
 
 				socketClient.Ack(*evt.Request, payload)
+			case socketmode.EventTypeEventsAPI:
+				event := evt.Data.(slackevents.EventsAPIEvent)
+				switch event.InnerEvent.Type {
+				case "app_mention":
+					data := event.InnerEvent.Data.(*slackevents.AppMentionEvent)
+					AppMentionHandler(socketClient, data)
+				}
+
+				socketClient.Ack(*evt.Request)
 			default:
 				fmt.Fprintf(os.Stderr, "Unexpected event type received: %s\n", evt.Type)
+				socketClient.Ack(*evt.Request)
 			}
 		}
 	}()
