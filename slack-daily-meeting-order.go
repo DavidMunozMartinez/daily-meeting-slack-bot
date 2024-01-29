@@ -62,7 +62,6 @@ func main() {
 				socketClient.Ack(*evt.Request)
 			default:
 				fmt.Fprintf(os.Stderr, "Unexpected event type received: %s\n", evt.Type)
-				socketClient.Ack(*evt.Request)
 			}
 		}
 	}()
