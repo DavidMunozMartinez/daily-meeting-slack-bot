@@ -14,9 +14,9 @@ const (
 )
 
 func AppMentionHandler(socketClient *socketmode.Client, data *slackevents.AppMentionEvent) {
-	var args = strings.Split(data.Text, ":")
+	var args = strings.Split(data.Text, " ")
 
-	if len(args) > 0 && args[1] != "" {
+	if len(args) > 1 && args[1] != "" {
 		switch args[1] {
 		case CodeReview:
 			TagCodeReviewers(socketClient, data)
@@ -25,8 +25,11 @@ func AppMentionHandler(socketClient *socketmode.Client, data *slackevents.AppMen
 }
 
 func TagCodeReviewers(socketClient *socketmode.Client, data *slackevents.AppMentionEvent) {
-	var args = strings.Split(data.Text, ":")
-	var team = args[2]
+	var args = strings.Split(data.Text, " ")
+	var team = ""
+	if len(args) > 2 {
+		team = args[2]
+	}
 	blocks := []slack.Block{}
 
 	users, _, _ := socketClient.GetUsersInConversation(&slack.GetUsersInConversationParameters{ChannelID: data.Channel})
