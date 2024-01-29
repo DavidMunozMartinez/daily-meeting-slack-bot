@@ -57,6 +57,8 @@ func main() {
 				case "app_mention":
 					data := event.InnerEvent.Data.(*slackevents.AppMentionEvent)
 					AppMentionHandler(socketClient, data)
+				case "user_huddle_changed":
+					// data := event.InnerEvent.Data.(slack.UserChangeEvent)
 				}
 
 				socketClient.Ack(*evt.Request)
