@@ -14,10 +14,10 @@ const (
 )
 
 func AppMentionHandler(socketClient *socketmode.Client, data *slackevents.AppMentionEvent) {
-	var command = strings.Split(data.Text, ":")[1]
+	var args = strings.Split(data.Text, ":")
 
-	if command != "" {
-		switch command {
+	if len(args) > 0 && args[1] != "" {
+		switch args[1] {
 		case CodeReview:
 			TagCodeReviewers(socketClient, data)
 		}
