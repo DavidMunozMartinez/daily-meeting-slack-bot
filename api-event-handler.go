@@ -40,7 +40,7 @@ func TagCodeReviewers(socketClient *socketmode.Client, data *slackevents.AppMent
 	// We have a parameter
 	for i := range users {
 		info, _ := socketClient.GetUserInfo(users[i])
-		if CanAddToList(info, team) && count <= 2 && data.User != users[i] {
+		if CanAddToList(info, team) && count < 2 && data.User != users[i] {
 			filtered = append(filtered, users[i])
 			count++
 		}
