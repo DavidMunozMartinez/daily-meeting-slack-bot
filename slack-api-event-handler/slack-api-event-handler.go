@@ -1,6 +1,7 @@
-package main
+package slackapieventshandler
 
 import (
+	utils "slack-manager/utils"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -35,28 +36,28 @@ func TagCodeReviewers(socketClient *socketmode.Client, data *slackevents.AppMent
 	blocks := []slack.Block{}
 	users, _, _ := socketClient.GetUsersInConversation(&slack.GetUsersInConversationParameters{ChannelID: data.Channel})
 
-	Shuffle(users)
+	utils.Shuffle(users)
 	var filtered []string
 	// We have a parameter
 	for i := range users {
 		info, _ := socketClient.GetUserInfo(users[i])
-		if CanAddToList(info, team) && count < 2 && data.User != users[i] {
+		if utils.CanAddToList(info, team) && count < 2 && data.User != users[i] {
 			filtered = append(filtered, users[i])
 			count++
 		}
 	}
 	if len(filtered) == 0 {
-		blocks = append(blocks, MakeSimpleTextSectionBlock("No available reviewers :c"))
+		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("No available reviewers :c"))
 	} else {
 		var title = ""
 		if team != "" {
 			title += "[" + team + "] "
 		}
 		title += "Code reviewrs: "
-		blocks = append(blocks, MakeSimpleTextSectionBlock(title))
+		blocks = append(blocks, utils.MakeSimpleTextSectionBlock(title))
 	}
 	for i := range filtered {
-		blocks = append(blocks, MakeSimpleTextSectionBlock("<@"+filtered[i]+">"))
+		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("<@"+filtered[i]+">"))
 	}
 	socketClient.PostMessage(
 		data.Channel,

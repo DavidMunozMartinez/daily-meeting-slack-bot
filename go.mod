@@ -1,9 +1,10 @@
-module example/hello
+module slack-manager
 
-go 1.18
+go 1.22
 
 require (
-	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/joho/godotenv v1.4.0 // indirect
-	github.com/slack-go/slack v0.11.2 // indirect
+	github.com/joho/godotenv v1.5.1
+	github.com/slack-go/slack v0.12.5
 )
+
+require github.com/gorilla/websocket v1.4.2 // indirect

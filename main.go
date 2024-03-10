@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	slackcommandhandler "slack-manager/slack-api-command-handler"
+	slackapieventshandler "slack-manager/slack-api-event-handler"
+	slackapiinteractionhandler "slack-manager/slack-api-interaction-handler"
 
 	"github.com/joho/godotenv"
 	"github.com/slack-go/slack"
@@ -37,31 +40,28 @@ func main() {
 					continue
 				}
 
-				blocks := []slack.Block{}
-				switch cmd.Command {
-				case "/meeting-order":
-					blocks = MeetingOrder(cmd, socketClient)
-				default:
-					blocks = append(blocks, MakeSimpleTextSectionBlock("Unknown command :("))
-				}
-
+				blocks := slackcommandhandler.CommandHandler(cmd, socketClient)
 				payload := map[string]interface{}{
 					"blocks":        blocks,
 					"response_type": "in_channel",
 				}
-
+				fmt.Print(payload)
 				socketClient.Ack(*evt.Request, payload)
+
 			case socketmode.EventTypeEventsAPI:
 				event := evt.Data.(slackevents.EventsAPIEvent)
 				switch event.InnerEvent.Type {
 				case "app_mention":
 					data := event.InnerEvent.Data.(*slackevents.AppMentionEvent)
-					AppMentionHandler(socketClient, data)
-				case "user_huddle_changed":
-					// data := event.InnerEvent.Data.(slack.UserChangeEvent)
+					slackapieventshandler.AppMentionHandler(socketClient, data)
 				}
-
 				socketClient.Ack(*evt.Request)
+
+			case socketmode.EventTypeInteractive:
+				event := evt.Data.(slack.InteractionCallback)
+				slackapiinteractionhandler.Handler(event, socketClient)
+				socketClient.Ack(*evt.Request)
+
 			default:
 				fmt.Fprintf(os.Stderr, "Unexpected event type received: %s\n", evt.Type)
 			}
