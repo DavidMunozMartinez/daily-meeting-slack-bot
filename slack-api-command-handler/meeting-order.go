@@ -2,6 +2,7 @@ package slackcommandhandler
 
 import (
 	"fmt"
+	slackapiinteractionhandler "slack-manager/slack-api-interaction-handler"
 	utils "slack-manager/utils"
 	"strconv"
 
@@ -67,13 +68,13 @@ func MeetingOrderV2(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 			display := "<@" + user + ">"
 			blocks = append(
 				blocks,
-				utils.MakeSimpleTextSectionBlock(order+" - "+display),
+				utils.MakeSimpleTextSectionBlock(order+" - "+slackapiinteractionhandler.GetDefaultMarker()+display),
 			)
 		}
 	}
 
 	if count > 0 {
-		blocks = append(blocks, utils.MakeButtonBlock("Confirm Assistance", "Am Here!"))
+		blocks = append(blocks, utils.MakeButtonBlock("I am in the meeting!", ":slack_call:"))
 	}
 
 	return blocks

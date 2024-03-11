@@ -11,7 +11,7 @@ import (
 	"github.com/slack-go/slack/socketmode"
 )
 
-type responseUrlStruct struct {
+type ResponseURLBody struct {
 	Blocks          slack.Blocks `json:"blocks"`
 	ReplaceOriginal bool         `json:"replace_original"`
 }
@@ -21,36 +21,67 @@ func Handler(event slack.InteractionCallback, client *socketmode.Client) {
 
 	switch action.ActionID {
 	case "mark-assistance":
-		MarkAssistance(event, client)
+		markAssistance(event, client)
 	}
 }
 
-func MarkAssistance(event slack.InteractionCallback, client *socketmode.Client) {
+func GetAttendanceMarker() string {
+	return ":large_green_square:"
+}
+
+func GetDefaultMarker() string {
+	return ":white_square:"
+}
+
+func markAssistance(event slack.InteractionCallback, client *socketmode.Client) {
 	var userId = event.User.ID
 	var newBlocks = event.Message.Blocks
-	for _, block := range newBlocks.BlockSet {
-		var data = block.(*slack.SectionBlock)
-		if strings.Contains(data.Text.Text, userId) {
-			var text = data.Text.Text
-			var deconstructedText = strings.Split(text, " - ")
-			var order = deconstructedText[0]
-			var name = deconstructedText[1]
-			data.Text.Text = order + " - " + ":white_check_mark:" + name
+	var changes = 0
+	for _, elem := range newBlocks.BlockSet {
+		var block = elem.(*slack.SectionBlock)
+		if blockContainsUserId(block, userId) && !hasAttendanceMarker(block) {
+			removeBlankMarker(block)
+			addAttendanceMarker(block)
+			changes++
 		}
 	}
 
-	json, err := json.Marshal(responseUrlStruct{
-		Blocks:          newBlocks,
-		ReplaceOriginal: true,
-	})
+	// Prevent the api call if no changes where made
+	if changes > 0 {
+		json, err := json.Marshal(ResponseURLBody{
+			Blocks:          newBlocks,
+			ReplaceOriginal: true,
+		})
 
-	if err != nil {
-		log.Fatal(err)
-	}
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	resp, err := http.Post(event.ResponseURL, "application/json", bytes.NewReader(json))
-	if err != nil {
-		log.Fatal(err)
+		resp, err := http.Post(event.ResponseURL, "application/json", bytes.NewReader(json))
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer resp.Body.Close()
 	}
-	defer resp.Body.Close()
+}
+
+func blockContainsUserId(block *slack.SectionBlock, userId string) bool {
+	return strings.Contains(block.Text.Text, userId)
+}
+
+func hasAttendanceMarker(block *slack.SectionBlock) bool {
+	var text = block.Text.Text
+	return strings.Contains(text, GetAttendanceMarker())
+}
+
+func removeBlankMarker(block *slack.SectionBlock) {
+	block.Text.Text = strings.Replace(block.Text.Text, GetDefaultMarker(), "", -1)
+}
+
+func addAttendanceMarker(block *slack.SectionBlock) {
+	var text = block.Text.Text
+	var deconstructedText = strings.Split(text, " - ")
+	var order = deconstructedText[0]
+	var name = deconstructedText[1]
+	block.Text.Text = order + " - " + GetAttendanceMarker() + name
 }

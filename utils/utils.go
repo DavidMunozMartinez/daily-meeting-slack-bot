@@ -65,7 +65,7 @@ func MakeButtonBlock(title string, text string) slack.Block {
 	return slack.NewSectionBlock(
 		&slack.TextBlockObject{
 			Text: text,
-			Type: slack.PlainTextType,
+			Type: slack.MarkdownType,
 		},
 		nil,
 		&slack.Accessory{
