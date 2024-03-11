@@ -28,7 +28,7 @@ func MeetingOrder(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 			blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Error: "+err.Error()))
 		}
 
-		if utils.CanAddToList(info, cmd.Text) {
+		if utils.CanAddToList(info, cmd.Text, true) {
 			count++
 			order := strconv.FormatInt(int64(count), 10)
 			display := "<@" + user + ">"
@@ -62,7 +62,7 @@ func MeetingOrderV2(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 			blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Error: "+err.Error()))
 		}
 
-		if utils.CanAddToList(info, cmd.Text) {
+		if utils.CanAddToList(info, cmd.Text, true) {
 			count++
 			order := strconv.FormatInt(int64(count), 10)
 			display := "<@" + user + ">"

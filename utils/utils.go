@@ -74,10 +74,10 @@ func MakeButtonBlock(title string, text string) slack.Block {
 	)
 }
 
-func CanAddToList(info *slack.User, query string) bool {
+func CanAddToList(info *slack.User, query string, useInclusiveRoles bool) bool {
 	var queryInTitle = strings.Contains(info.Profile.Title, query)
 	var hasQuery = query != ""
-	var IsInclusiveTitle = IsInclusiveTitle(info, query)
+	var IsInclusiveTitle = IsInclusiveTitle(info, query) && useInclusiveRoles
 
 	passesQuery :=
 		!hasQuery ||

@@ -49,16 +49,21 @@ func main() {
 				socketClient.Ack(*evt.Request, payload)
 
 			case socketmode.EventTypeEventsAPI:
-				event := evt.Data.(slackevents.EventsAPIEvent)
-				switch event.InnerEvent.Type {
-				case "app_mention":
-					data := event.InnerEvent.Data.(*slackevents.AppMentionEvent)
-					slackapieventshandler.AppMentionHandler(socketClient, data)
+				event, ok := evt.Data.(slackevents.EventsAPIEvent)
+				if !ok {
+					fmt.Printf("Ignored %+v\n", evt)
+					continue
 				}
+
+				slackapieventshandler.EventHandler(socketClient, event)
 				socketClient.Ack(*evt.Request)
 
 			case socketmode.EventTypeInteractive:
-				event := evt.Data.(slack.InteractionCallback)
+				event, ok := evt.Data.(slack.InteractionCallback)
+				if !ok {
+					fmt.Printf("Ignored %+v\n", evt)
+					continue
+				}
 				slackapiinteractionhandler.Handler(event, socketClient)
 				socketClient.Ack(*evt.Request)
 

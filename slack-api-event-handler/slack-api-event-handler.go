@@ -14,6 +14,14 @@ const (
 	CodeReview = "CR"
 )
 
+func EventHandler(client *socketmode.Client, event slackevents.EventsAPIEvent) {
+	switch event.InnerEvent.Type {
+	case "app_mention":
+		data := event.InnerEvent.Data.(*slackevents.AppMentionEvent)
+		AppMentionHandler(client, data)
+	}
+}
+
 func AppMentionHandler(socketClient *socketmode.Client, data *slackevents.AppMentionEvent) {
 	var args = strings.Split(data.Text, " ")
 
@@ -41,7 +49,7 @@ func TagCodeReviewers(socketClient *socketmode.Client, data *slackevents.AppMent
 	// We have a parameter
 	for i := range users {
 		info, _ := socketClient.GetUserInfo(users[i])
-		if utils.CanAddToList(info, team) && count < 2 && data.User != users[i] {
+		if utils.CanAddToList(info, team, false) && count < 2 && data.User != users[i] {
 			filtered = append(filtered, users[i])
 			count++
 		}
