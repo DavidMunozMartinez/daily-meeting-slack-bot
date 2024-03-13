@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	slackcommandhandler "slack-manager/slack-api-command-handler"
+	slackapicommandhandler "slack-manager/slack-api-command-handler"
 	slackapieventshandler "slack-manager/slack-api-event-handler"
 	slackapiinteractionhandler "slack-manager/slack-api-interaction-handler"
 
@@ -40,7 +40,7 @@ func main() {
 					continue
 				}
 
-				blocks := slackcommandhandler.CommandHandler(cmd, socketClient)
+				blocks := slackapicommandhandler.CommandHandler(cmd, socketClient)
 				payload := map[string]interface{}{
 					"blocks":        blocks,
 					"response_type": "in_channel",

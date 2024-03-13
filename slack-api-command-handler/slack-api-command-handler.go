@@ -1,4 +1,4 @@
-package slackcommandhandler
+package slackapicommandhandler
 
 import (
 	utils "slack-manager/utils"
