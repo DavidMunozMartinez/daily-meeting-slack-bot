@@ -15,7 +15,7 @@ func Shuffle(a []string) {
 	rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
 }
 
-func MakeSimpleTextSectionBlock(text string) slack.Block {
+func MakeTextSectionBlock(text string) slack.Block {
 	block := slack.NewSectionBlock(
 		&slack.TextBlockObject{
 			Type: slack.MarkdownType,
@@ -27,7 +27,7 @@ func MakeSimpleTextSectionBlock(text string) slack.Block {
 	return block
 }
 
-func MakeCheckboxBlock(display string, userId string) slack.Block {
+func MakeCheckboxSectionBlock(display string, userId string) slack.Block {
 
 	option := &slack.OptionBlockObject{
 		Text: &slack.TextBlockObject{
@@ -51,7 +51,7 @@ func MakeCheckboxBlock(display string, userId string) slack.Block {
 	)
 }
 
-func MakeButtonBlock(title string, text string) slack.Block {
+func MakeButtonSectionBlock(title string, text string) slack.Block {
 	button := &slack.ButtonBlockElement{
 		Type: "button",
 		Text: &slack.TextBlockObject{

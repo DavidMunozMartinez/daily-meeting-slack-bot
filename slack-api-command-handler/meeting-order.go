@@ -14,18 +14,18 @@ func MeetingOrder(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 	blocks := []slack.Block{}
 	users, err := getShuffledUsersInChannel(cmd, client)
 	if err != nil {
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Error: "+err.Error()))
+		blocks = append(blocks, utils.MakeTextSectionBlock("Error: "+err.Error()))
 	}
 
 	if cmd.Text != "" && len(users) > 0 {
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock(cmd.Text+" Team"))
+		blocks = append(blocks, utils.MakeTextSectionBlock(cmd.Text+" Team"))
 	}
 
 	count := 0
 	for _, user := range users {
 		info, err := client.GetUserInfo(user)
 		if err != nil {
-			blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Error: "+err.Error()))
+			blocks = append(blocks, utils.MakeTextSectionBlock("Error: "+err.Error()))
 		}
 
 		if utils.CanAddToList(info, cmd.Text, true) {
@@ -34,7 +34,7 @@ func MeetingOrder(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 			display := "<@" + user + ">"
 			blocks = append(
 				blocks,
-				utils.MakeSimpleTextSectionBlock(order+" - "+display),
+				utils.MakeTextSectionBlock(order+" - "+display),
 			)
 
 			fmt.Println(info.RealName)
@@ -47,19 +47,19 @@ func MeetingOrderV2(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 	blocks := []slack.Block{}
 	users, err := getShuffledUsersInChannel(cmd, client)
 	if err != nil {
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Error: "+err.Error()))
+		blocks = append(blocks, utils.MakeTextSectionBlock("Error: "+err.Error()))
 		return blocks
 	}
 
 	if cmd.Text != "" && len(users) > 0 {
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock(cmd.Text+" Team"))
+		blocks = append(blocks, utils.MakeTextSectionBlock(cmd.Text+" Team"))
 	}
 
 	count := 0
 	for _, user := range users {
 		info, err := client.GetUserInfo(user)
 		if err != nil {
-			blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Error: "+err.Error()))
+			blocks = append(blocks, utils.MakeTextSectionBlock("Error: "+err.Error()))
 		}
 
 		if utils.CanAddToList(info, cmd.Text, true) {
@@ -68,13 +68,13 @@ func MeetingOrderV2(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 			display := "<@" + user + ">"
 			blocks = append(
 				blocks,
-				utils.MakeSimpleTextSectionBlock(order+" - "+slackapiinteractionhandler.GetDefaultMarker()+display),
+				utils.MakeTextSectionBlock(order+" - "+slackapiinteractionhandler.GetDefaultMarker()+display),
 			)
 		}
 	}
 
 	if count > 0 {
-		blocks = append(blocks, utils.MakeButtonBlock("I am in the meeting!", ":slack_call:"))
+		blocks = append(blocks, utils.MakeButtonSectionBlock("I am in the meeting!", ":slack_call:"))
 	}
 
 	return blocks

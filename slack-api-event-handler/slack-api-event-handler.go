@@ -55,17 +55,17 @@ func TagCodeReviewers(socketClient *socketmode.Client, data *slackevents.AppMent
 		}
 	}
 	if len(filtered) == 0 {
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("No available reviewers :c"))
+		blocks = append(blocks, utils.MakeTextSectionBlock("No available reviewers :c"))
 	} else {
 		var title = ""
 		if team != "" {
 			title += "[" + team + "] "
 		}
 		title += "Code reviewrs: "
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock(title))
+		blocks = append(blocks, utils.MakeTextSectionBlock(title))
 	}
 	for i := range filtered {
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("<@"+filtered[i]+">"))
+		blocks = append(blocks, utils.MakeTextSectionBlock("<@"+filtered[i]+">"))
 	}
 	socketClient.PostMessage(
 		data.Channel,

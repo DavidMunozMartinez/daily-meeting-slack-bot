@@ -15,7 +15,7 @@ func CommandHandler(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 	case "/meeting-order-v2":
 		blocks = MeetingOrderV2(cmd, client)
 	default:
-		blocks = append(blocks, utils.MakeSimpleTextSectionBlock("Unknown command :("))
+		blocks = append(blocks, utils.MakeTextSectionBlock("Unknown command :("))
 	}
 	return blocks
 }
