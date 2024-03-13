@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/slack-go/slack"
-	"github.com/slack-go/slack/socketmode"
 )
 
 type ResponseURLBody struct {
@@ -16,12 +15,12 @@ type ResponseURLBody struct {
 	ReplaceOriginal bool         `json:"replace_original"`
 }
 
-func Handler(event slack.InteractionCallback, client *socketmode.Client) {
+func InteractionHandler(event slack.InteractionCallback) {
 	action := event.ActionCallback.BlockActions[0]
 
 	switch action.ActionID {
 	case "mark-assistance":
-		markAssistance(event, client)
+		markAssistance(event)
 	}
 }
 
@@ -33,7 +32,7 @@ func GetDefaultMarker() string {
 	return ":white_square:"
 }
 
-func markAssistance(event slack.InteractionCallback, client *socketmode.Client) {
+func markAssistance(event slack.InteractionCallback) {
 	var userId = event.User.ID
 	var newBlocks = event.Message.Blocks
 	var changes = 0

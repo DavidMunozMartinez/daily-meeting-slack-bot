@@ -64,7 +64,7 @@ func main() {
 					fmt.Printf("Ignored %+v\n", evt)
 					continue
 				}
-				slackapiinteractionhandler.Handler(event, socketClient)
+				slackapiinteractionhandler.InteractionHandler(event)
 				socketClient.Ack(*evt.Request)
 
 			default:
