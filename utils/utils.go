@@ -16,7 +16,7 @@ func Shuffle(a []string) {
 }
 
 func MakeTextSectionBlock(text string) slack.Block {
-	block := slack.NewSectionBlock(
+	return slack.NewSectionBlock(
 		&slack.TextBlockObject{
 			Type: slack.MarkdownType,
 			Text: text,
@@ -24,7 +24,6 @@ func MakeTextSectionBlock(text string) slack.Block {
 		nil,
 		nil,
 	)
-	return block
 }
 
 func MakeCheckboxSectionBlock(display string, userId string) slack.Block {
