@@ -5,14 +5,15 @@ import (
 	titletags "slack-manager/title-tags"
 	"slices"
 	"strings"
-	"time"
 
 	"github.com/slack-go/slack"
 )
 
 func Shuffle(a []string) {
-	rand.Seed(time.Now().UnixNano())
-	rand.Shuffle(len(a), func(i, j int) { a[i], a[j] = a[j], a[i] })
+	for i := range a {
+		j := rand.Intn(i + 1)
+		a[i], a[j] = a[j], a[i]
+	}
 }
 
 func MakeTextSectionBlock(text string) slack.Block {
