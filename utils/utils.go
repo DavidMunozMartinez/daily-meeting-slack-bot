@@ -5,13 +5,17 @@ import (
 	titletags "slack-manager/title-tags"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/slack-go/slack"
 )
 
 func Shuffle(a []string) {
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+
 	for i := range a {
-		j := rand.Intn(i + 1)
+		j := r.Intn(i + 1)
 		a[i], a[j] = a[j], a[i]
 	}
 }
