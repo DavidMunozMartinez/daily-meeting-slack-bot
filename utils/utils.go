@@ -1,22 +1,24 @@
 package utils
 
 import (
+	"fmt"
 	"math/rand"
 	titletags "slack-manager/title-tags"
 	"slices"
 	"strings"
-	"time"
 
 	"github.com/slack-go/slack"
 )
 
 func Shuffle(a []string) {
-	source := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(source)
-
-	for i := range a {
-		j := r.Intn(i + 1)
-		a[i], a[j] = a[j], a[i]
+	l := len(a) - 1
+	for i := 0; i <= l; i++ {
+		n := rand.Intn(l)
+		fmt.Println(n)
+		// swap
+		x := a[i]
+		a[i] = a[n]
+		a[n] = x
 	}
 }
 
