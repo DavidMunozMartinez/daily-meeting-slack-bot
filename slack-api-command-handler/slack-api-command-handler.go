@@ -22,7 +22,7 @@ func CommandHandler(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 
 func getShuffledUsersInChannel(cmd slack.SlashCommand, client *socketmode.Client) ([]string, error) {
 	users, _, err := client.GetUsersInConversation(&slack.GetUsersInConversationParameters{ChannelID: cmd.ChannelID})
-	if err != nil {
+	if err == nil {
 		utils.Shuffle(users)
 	}
 
