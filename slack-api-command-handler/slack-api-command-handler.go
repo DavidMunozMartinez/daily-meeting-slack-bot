@@ -14,6 +14,8 @@ func CommandHandler(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 		blocks = MeetingOrder(cmd, client)
 	case "/meeting-order-v2":
 		blocks = MeetingOrderV2(cmd, client)
+	case "/api-status":
+		blocks = GetAPIStatus(cmd, client)
 	default:
 		blocks = append(blocks, utils.MakeTextSectionBlock("Unknown command :("))
 	}
