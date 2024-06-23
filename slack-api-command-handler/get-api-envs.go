@@ -5,16 +5,21 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
+
+	"github.com/slack-go/slack"
+	"github.com/slack-go/slack/socketmode"
 )
 
 const (
-	gitlabAPIURL   = "https://gitlab.com/api/v4"
-	projectURL     = "https://gitlab.com/ggallagher/api"
-	projectID      = os.Getenv("GITLAB_PROJECT_ID")
-	privateToken   = os.Getenv("GITLAB_PRIVATE_TOKEN")
+	gitlabAPIURL = "https://gitlab.com/api/v4"
+	projectURL   = "https://gitlab.com/ggallagher/api"
 )
+
+var projectID = os.Getenv("GITLAB_PROJECT_ID")
+var privateToken = os.Getenv("GITLAB_PRIVATE_TOKEN")
 
 func sendGetRequest(url string, privateToken string) ([]byte, error) {
 	client := &http.Client{}
@@ -129,7 +134,6 @@ func getHumanReadableTime(timeString string) string {
 	return t.Format("January 02, 2006, 15:04:05")
 }
 
-
 func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Block {
 	environments, err := getEnvironments()
 	catchErr(err)
@@ -144,7 +148,7 @@ func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 		environmentID := fmt.Sprintf("%v", environment["id"])
 		var environmentDeployments = filterEnvironmentDeployments(deployments, environmentID)
 		var uniqueDeployableNames = getUniqueDeployableNames(environmentDeployments)
-		
+
 		if len(environmentDeployments) > 0 {
 			for deployName := range uniqueDeployableNames {
 
@@ -161,14 +165,14 @@ func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 						"pipeline_url": fmt.Sprintf("%v", matchingDeployment["deployable"].(map[string]interface{})["pipeline"].(map[string]interface{})["web_url"]),
 						"source_url":   sourceUrl,
 					}
-						
+
 					//jFormattedDeployment, _ := json.MarshalIndent(formattedDeployment, "", "\t")
 					//fmt.Println(string(jFormattedDeployment))
 
 					deploymentText := fmt.Sprintf("*%s*\n> User: %s\n> Created At: %s\n> [Pipeline URL](%s)\n> [Source URL](%s)",
-                        formattedDeployment["env"], formattedDeployment["user"], formattedDeployment["created_at"], formattedDeployment["pipeline_url"], formattedDeployment["source_url"])
+						formattedDeployment["env"], formattedDeployment["user"], formattedDeployment["created_at"], formattedDeployment["pipeline_url"], formattedDeployment["source_url"])
 
-                    blocks = append(blocks, slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", deploymentText, false, false), nil, nil))
+					blocks = append(blocks, slack.NewSectionBlock(slack.NewTextBlockObject("mrkdwn", deploymentText, false, false), nil, nil))
 				}
 			}
 		}
