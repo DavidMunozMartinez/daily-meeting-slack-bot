@@ -185,9 +185,6 @@ func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 						"source_url":   sourceUrl,
 					}
 
-					//jFormattedDeployment, _ := json.MarshalIndent(formattedDeployment, "", "\t")
-					//fmt.Println(string(jFormattedDeployment))
-
 					deploymentText := fmt.Sprintf("*%s*\n> User: %s\n> Created At: %s\n> [Pipeline URL](%s)\n> [Source URL](%s)",
 						formattedDeployment["env"], formattedDeployment["user"], formattedDeployment["created_at"], formattedDeployment["pipeline_url"], formattedDeployment["source_url"])
 
