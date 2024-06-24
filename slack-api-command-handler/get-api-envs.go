@@ -102,7 +102,8 @@ func filterEnvironmentDeployments(environmentDeployments []map[string]interface{
 	var filteredDeployments []map[string]interface{}
 	for _, deployment := range environmentDeployments {
 		deploymentEnvID := fmt.Sprintf("%v", deployment["environment"].(map[string]interface{})["id"])
-		if deploymentEnvID == environmentID {
+		deploymentStatus := fmt.Sprintf("%v", deployment["deployable"].(map[string]interface{})["status"])
+		if deploymentEnvID == environmentID && deploymentStatus == "success" {
 			filteredDeployments = append(filteredDeployments, deployment)
 		}
 	}
@@ -137,6 +138,16 @@ func getHumanReadableTime(timeString string) string {
 	return t.Format("January 02, 2006, 15:04:05")
 }
 
+func filterEnvironments(environments []map[string]interface{}, text string) []map[string]interface{} {
+	var filteredEnvironments []map[string]interface{}
+	for _, environment := range environments {
+		if strings.Contains(fmt.Sprintf("%v", environment["name"]), text) {
+			filteredEnvironments = append(filteredEnvironments, environment)
+		}
+	}
+	return filteredEnvironments
+}
+
 func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Block {
 	environments, err := getEnvironments()
 	catchErr(err)
@@ -145,6 +156,11 @@ func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 	catchErr(err)
 
 	var blocks []slack.Block
+
+	if cmd.Text != "" {
+		environments = filterEnvironments(environments, cmd.Text)
+		fmt.Println("environments: ", environments)
+	}
 
 	for _, environment := range environments {
 
