@@ -18,9 +18,6 @@ const (
 	projectURL   = "https://gitlab.com/ggallagher/api"
 )
 
-var projectID = os.Getenv("GITLAB_PROJECT_ID")
-var privateToken = os.Getenv("GITLAB_PRIVATE_TOKEN")
-
 func sendGetRequest(url string, privateToken string) ([]byte, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", url, nil)
@@ -48,7 +45,10 @@ func sendGetRequest(url string, privateToken string) ([]byte, error) {
 }
 
 func getEnvironments() ([]map[string]interface{}, error) {
+	var privateToken = os.Getenv("GITLAB_PRIVATE_TOKEN")
+	var projectID = os.Getenv("GITLAB_PROJECT_ID")
 	url := fmt.Sprintf("%s/projects/%s/environments", gitlabAPIURL, projectID)
+
 	body, err := sendGetRequest(url, privateToken)
 	catchErr(err)
 
@@ -58,6 +58,9 @@ func getEnvironments() ([]map[string]interface{}, error) {
 }
 
 func getDeployments(perPage int, maxPages int) ([]map[string]interface{}, error) {
+	var privateToken = os.Getenv("GITLAB_PRIVATE_TOKEN")
+	var projectID = os.Getenv("GITLAB_PROJECT_ID")
+
 	var deployments []map[string]interface{}
 
 	for page := 1; page <= maxPages; page++ {
