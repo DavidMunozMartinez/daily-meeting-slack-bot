@@ -130,11 +130,9 @@ func getSourceUrlBasedOnRef(ref string) string {
 
 // format the time to human readable format
 func getHumanReadableTime(timeString string) string {
-	location, _ := time.LoadLocation("America/Los_Angeles")
 	t, err := time.Parse(time.RFC3339, timeString)
 	catchErr(err)
-
-	t = t.In(location)
+	t = t.Add(-8 * time.Hour)
 	return t.Format("January 02, 2006, 15:04:05")
 }
 
