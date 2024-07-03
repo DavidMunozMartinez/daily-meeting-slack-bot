@@ -152,7 +152,7 @@ func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Blo
 	environments, err := getEnvironments()
 	catchErr(err)
 
-	deployments, err := getDeployments(100, 1)
+	deployments, err := getDeployments(200, 1)
 	catchErr(err)
 
 	var blocks []slack.Block
