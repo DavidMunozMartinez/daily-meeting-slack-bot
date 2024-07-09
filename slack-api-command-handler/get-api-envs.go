@@ -57,14 +57,20 @@ func getEnvironments() ([]map[string]interface{}, error) {
 	return environments, err
 }
 
-func getDeployments(perPage int, maxPages int) ([]map[string]interface{}, error) {
+func getDeployments(perPage int, maxPages int, env string) ([]map[string]interface{}, error) {
 	var privateToken = os.Getenv("GITLAB_PRIVATE_TOKEN")
 	var projectID = os.Getenv("GITLAB_PROJECT_ID")
 
 	var deployments []map[string]interface{}
+	var url string
 
 	for page := 1; page <= maxPages; page++ {
-		url := fmt.Sprintf("%s/projects/%s/deployments?per_page=%d&page=%d&order_by=created_at&sort=desc", gitlabAPIURL, projectID, perPage, page)
+		if env == "" {
+			url = fmt.Sprintf("%s/projects/%s/deployments?per_page=%d&page=%d&order_by=created_at&sort=desc&status=success", gitlabAPIURL, projectID, perPage, page)
+		} else {
+			url = fmt.Sprintf("%s/projects/%s/deployments?per_page=%d&page=%d&order_by=created_at&sort=desc&status=success&environment=%d", gitlabAPIURL, projectID, perPage, page, env)
+		}
+
 		body, err := sendGetRequest(url, privateToken)
 		catchErr(err)
 
@@ -149,8 +155,7 @@ func filterEnvironments(environments []map[string]interface{}, text string) []ma
 func GetAPIStatus(cmd slack.SlashCommand, client *socketmode.Client) []slack.Block {
 	environments, err := getEnvironments()
 	catchErr(err)
-
-	deployments, err := getDeployments(100, 1)
+	deployments, err := getDeployments(250, 1, cmd.Text)
 	catchErr(err)
 
 	var blocks []slack.Block
