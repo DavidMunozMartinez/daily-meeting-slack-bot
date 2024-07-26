@@ -113,7 +113,7 @@ func scheduledTeamRotation() {
 	}
 
 	message := fmt.Sprintf(
-		"This week's sentry maintainers will be :salute:\n%s from the FE team\n%s from the BE team\nThanks!",
+		"This week's sentry maintainers will be :saluting_face:\n%s from the FE team\n%s from the BE team\nThanks!",
 		FE_User, BE_User,
 	)
 	err := postMessageToSlack(channelID, message)
@@ -137,12 +137,20 @@ func GetRotationState(cmd slack.SlashCommand, client *socketmode.Client) []slack
 
 	FE_Text := ""
 	for i, user := range FE_List {
-		FE_Text += fmt.Sprintf("%d - <@%s>\n", i, user.ID)
+		if i == FE_Index {
+			FE_Text += fmt.Sprintf("*%d - <@%s>* :meow_code: \n", i, user.ID)
+		} else {
+			FE_Text += fmt.Sprintf("%d - <@%s> \n", i, user.ID)
+		}
 	}
 
 	BE_Text := ""
 	for i, user := range BE_List {
-		BE_Text += fmt.Sprintf("%d - <@%s>\n", i, user.ID)
+		if i == BE_Index {
+			BE_Text += fmt.Sprintf("*%d - <@%s>* :meow_code: \n", i, user.ID)
+		} else {
+			BE_Text += fmt.Sprintf("%d - <@%s>\n", i, user.ID)
+		}
 	}
 
 	feSection := slack.NewSectionBlock(
@@ -197,7 +205,7 @@ func SetFERotation(cmd slack.SlashCommand, client *socketmode.Client) []slack.Bl
 	FE_Index = index
 	
 	questionText := slack.NewTextBlockObject("mrkdwn", "Successfully updated!", false, false)
-	yesButtonText := slack.NewTextBlockObject("plain_text", "Click here to send update to channel", false, false)
+	yesButtonText := slack.NewTextBlockObject("plain_text", "Click here to send update", false, false)
 	yesButton := slack.NewButtonBlockElement("send_rotation", "send_rotation", yesButtonText)
 	questionSection := slack.NewSectionBlock(questionText, nil, slack.NewAccessory(yesButton))
 	blocks = append(blocks, questionSection)
@@ -219,7 +227,7 @@ func SetBERotation(cmd slack.SlashCommand, client *socketmode.Client) []slack.Bl
 	BE_Index = index
 
 	questionText := slack.NewTextBlockObject("mrkdwn", "Successfully updated!", false, false)
-	yesButtonText := slack.NewTextBlockObject("plain_text", "Click here to send update to channel", false, false)
+	yesButtonText := slack.NewTextBlockObject("plain_text", "Click here to send update", false, false)
 	yesButton := slack.NewButtonBlockElement("send_rotation", "send_rotation", yesButtonText)
 	questionSection := slack.NewSectionBlock(questionText, nil, slack.NewAccessory(yesButton))
 	blocks = append(blocks, questionSection)
@@ -238,16 +246,16 @@ func PostCurrentRotation() {
 	
 	FE_User := "No users"
 	if len(FE_List) > 0 {
-		FE_User = fmt.Sprintf("<@%s>", FE_List[FE_Index].RealName)
+		FE_User = fmt.Sprintf("<@%s>", FE_List[FE_Index].ID)
 	}
 
 	BE_User := "No users"
 	if len(BE_List) > 0 {
-		BE_User = fmt.Sprintf("<@%s>", BE_List[BE_Index].RealName)
+		BE_User = fmt.Sprintf("<@%s>", BE_List[BE_Index].ID)
 	}
 
 	message := fmt.Sprintf(
-		"This week's sentry maintainers have been updated :salute:\n%s from the FE team\n%s from the BE team",
+		"This week's sentry maintainers have been updated :saluting_face:\n%s from the FE team\n%s from the BE team",
 		FE_User, BE_User,
 	)
 	err := postMessageToSlack(channelID, message)
