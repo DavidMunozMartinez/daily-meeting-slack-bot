@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	slackapischeduler "slack-manager/slack-api-scheduler"
 	"strings"
 
 	"github.com/slack-go/slack"
@@ -21,6 +22,13 @@ func InteractionHandler(event slack.InteractionCallback) {
 	switch action.ActionID {
 	case "mark-assistance":
 		markAssistance(event)
+	case "send_rotation":
+		slackapischeduler.PostCurrentRotation()
+		resp, err := http.Post(event.ResponseURL, "application/json", bytes.NewReader([]byte(`{"replace_original":true}`)))
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer resp.Body.Close()
 	}
 }
 

@@ -1,14 +1,16 @@
 package slackapicommandhandler
 
 import (
+	slackapischeduler "slack-manager/slack-api-scheduler"
 	utils "slack-manager/utils"
 
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/socketmode"
 )
 
-func CommandHandler(cmd slack.SlashCommand, client *socketmode.Client) []slack.Block {
+func CommandHandler(cmd slack.SlashCommand, client *socketmode.Client) ([]slack.Block, string) {
 	blocks := []slack.Block{}
+	responseType := slack.ResponseTypeInChannel
 	switch cmd.Command {
 	case "/meeting-order":
 		blocks = MeetingOrder(cmd, client)
@@ -16,10 +18,19 @@ func CommandHandler(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 		blocks = MeetingOrderV2(cmd, client)
 	case "/api-status":
 		blocks = GetAPIStatus(cmd, client)
+	case "/get-rotation":
+		blocks = slackapischeduler.GetRotationState(cmd, client)
+		responseType = slack.ResponseTypeEphemeral
+	case "/set-fe-rotation":
+		blocks = slackapischeduler.SetFERotation(cmd, client)
+		responseType = slack.ResponseTypeEphemeral
+	case "/set-be-rotation":
+		blocks = slackapischeduler.SetBERotation(cmd, client)
+		responseType = slack.ResponseTypeEphemeral
 	default:
 		blocks = append(blocks, utils.MakeTextSectionBlock("Unknown command :("))
 	}
-	return blocks
+	return blocks, responseType
 }
 
 func getShuffledUsersInChannel(cmd slack.SlashCommand, client *socketmode.Client) ([]string, error) {

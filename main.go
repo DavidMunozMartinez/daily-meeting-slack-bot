@@ -7,6 +7,7 @@ import (
 	slackapicommandhandler "slack-manager/slack-api-command-handler"
 	slackapieventshandler "slack-manager/slack-api-event-handler"
 	slackapiinteractionhandler "slack-manager/slack-api-interaction-handler"
+	slackapischeduler "slack-manager/slack-api-scheduler"
 
 	"github.com/joho/godotenv"
 	"github.com/slack-go/slack"
@@ -30,6 +31,8 @@ func main() {
 		socketmode.OptionLog(log.New(os.Stdout, "socketmode: ", log.Lshortfile|log.LstdFlags)),
 	)
 
+	slackapischeduler.Init(api)
+
 	go func() {
 		for evt := range socketClient.Events {
 			switch evt.Type {
@@ -40,10 +43,10 @@ func main() {
 					continue
 				}
 
-				blocks := slackapicommandhandler.CommandHandler(cmd, socketClient)
+				blocks, responseType := slackapicommandhandler.CommandHandler(cmd, socketClient)
 				payload := map[string]interface{}{
 					"blocks":        blocks,
-					"response_type": "in_channel",
+					"response_type": responseType,
 				}
 				fmt.Print(payload)
 				socketClient.Ack(*evt.Request, payload)
