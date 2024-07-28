@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	gitlabapieventhandler "slack-manager/gitlab-api-event-handler"
 	slackapicommandhandler "slack-manager/slack-api-command-handler"
 	slackapieventshandler "slack-manager/slack-api-event-handler"
 	slackapiinteractionhandler "slack-manager/slack-api-interaction-handler"
@@ -32,6 +33,7 @@ func main() {
 	)
 
 	slackapischeduler.Init(api)
+	gitlabapieventhandler.Init()
 
 	go func() {
 		for evt := range socketClient.Events {

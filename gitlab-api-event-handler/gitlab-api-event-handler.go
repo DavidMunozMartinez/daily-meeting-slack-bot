@@ -30,14 +30,14 @@ func Init() {
     }
 
 	options := &gitlab.AddProjectHookOptions{
-        URL:                   gitlab.Ptr("https://your-webhook-url/gitlab-api"),
+        URL:                   gitlab.Ptr("https://daily-meeting-slack-bot-production.up.railway.app/gitlab-api"),
         PushEvents:            gitlab.Ptr(true),
         IssuesEvents:          gitlab.Ptr(true),
         MergeRequestsEvents:   gitlab.Ptr(true),
-        TagPushEvents:         gitlab.Ptr(true),
+        // TagPushEvents:         gitlab.Ptr(true),
         NoteEvents:            gitlab.Ptr(true),
-        PipelineEvents:        gitlab.Ptr(true),
-        WikiPageEvents:        gitlab.Ptr(true),
+        // PipelineEvents:        gitlab.Ptr(true),
+        // WikiPageEvents:        gitlab.Ptr(true),
         EnableSSLVerification: gitlab.Ptr(false),
     }
 
