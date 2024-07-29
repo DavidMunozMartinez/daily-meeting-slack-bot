@@ -102,14 +102,14 @@ func scheduledTeamRotation() {
 	
 	FE_User := "No users"
 	if len(FE_List) > 0 {
-		FE_User = fmt.Sprintf("<@%s>", FE_List[FE_Index].RealName)
 		FE_Index = (FE_Index + 1) % len(FE_List)
+		FE_User = fmt.Sprintf("<@%s>", FE_List[FE_Index].ID)
 	}
 
 	BE_User := "No users"
 	if len(BE_List) > 0 {
-		BE_User = fmt.Sprintf("<@%s>", BE_List[BE_Index].RealName)
 		BE_Index = (BE_Index + 1) % len(BE_List)
+		BE_User = fmt.Sprintf("<@%s>", BE_List[BE_Index].ID)
 	}
 
 	message := fmt.Sprintf(
