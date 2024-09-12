@@ -33,8 +33,7 @@ var (
 	mu       sync.Mutex // Mutex to synchronize access to indices and lists
 )
 
-
-func Init(a* slack.Client) {
+func Init(a *slack.Client) {
 	api = a
 	channelID := os.Getenv("SCHEDULER_CHANNEL_ID")
 	if channelID == "" {
@@ -97,9 +96,11 @@ func scheduledTeamRotation() {
 		log.Fatalf("SCHEDULER_CHANNEL_ID environment variable is not set")
 	}
 
+	fetchChannelMembers(channelID)
+
 	mu.Lock()
 	defer mu.Unlock()
-	
+
 	FE_User := "No users"
 	if len(FE_List) > 0 {
 		FE_Index = (FE_Index + 1) % len(FE_List)
@@ -203,7 +204,7 @@ func SetFERotation(cmd slack.SlashCommand, client *socketmode.Client) []slack.Bl
 	}
 
 	FE_Index = index
-	
+
 	questionText := slack.NewTextBlockObject("mrkdwn", "Successfully updated!", false, false)
 	yesButtonText := slack.NewTextBlockObject("plain_text", "Click here to send update", false, false)
 	yesButton := slack.NewButtonBlockElement("send_rotation", "send_rotation", yesButtonText)
@@ -233,7 +234,7 @@ func SetBERotation(cmd slack.SlashCommand, client *socketmode.Client) []slack.Bl
 	blocks = append(blocks, questionSection)
 
 	return blocks
-} 
+}
 
 func PostCurrentRotation() {
 	channelID := os.Getenv("SCHEDULER_CHANNEL_ID")
@@ -243,7 +244,7 @@ func PostCurrentRotation() {
 
 	mu.Lock()
 	defer mu.Unlock()
-	
+
 	FE_User := "No users"
 	if len(FE_List) > 0 {
 		FE_User = fmt.Sprintf("<@%s>", FE_List[FE_Index].ID)
