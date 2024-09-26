@@ -61,6 +61,9 @@ func fetchChannelMembers(channelID string) error {
 		return fmt.Errorf("failed to fetch channel members: %w", err)
 	}
 
+	FE_List = []User{}
+	BE_List = []User{}
+
 	for _, userID := range users {
 		user, err := api.GetUserInfo(userID)
 		if err != nil {
