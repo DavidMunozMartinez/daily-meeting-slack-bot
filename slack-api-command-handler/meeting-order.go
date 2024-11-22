@@ -74,7 +74,7 @@ func MeetingOrderV2(cmd slack.SlashCommand, client *socketmode.Client) []slack.B
 	}
 
 	if count > 0 {
-		blocks = append(blocks, utils.MakeButtonSectionBlock("I am in the meeting!", ":slack_call:"))
+		blocks = append(blocks, utils.MakeButtonSectionBlock("I have something to say!", ":slack_call:"))
 	}
 
 	return blocks
